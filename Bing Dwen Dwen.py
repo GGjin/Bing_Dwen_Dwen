@@ -19,7 +19,11 @@ class DesktopPet(QWidget):
         self.setAttribute(Qt.WA_TranslucentBackground, True)
         self.repaint()
         # 随机导入一个宠物
-        self.pet_images, iconpath = self.randomLoadPetImages()
+
+        self.randomPet()
+
+    def randomPet(self):
+        self.pet_images, iconpath = self.randomLoadPetImages1()
         # 设置退出选项
         quit_action = QAction('退出', self, triggered=self.quit)
         quit_action.setIcon(QIcon(iconpath))
@@ -37,7 +41,7 @@ class DesktopPet(QWidget):
         # 宠物拖拽时避免鼠标直接跳到左上角
         self.mouse_drag_pos = self.pos()
         # 显示(图片尺寸大小）
-        self.resize(512, 512)
+        self.resize(1024, 1024)
         self.randomPosition()
         self.show()
         # 宠物动画动作执行所需的一些变量
@@ -48,7 +52,7 @@ class DesktopPet(QWidget):
         # 每隔一段时间做个动作
         self.timer = QTimer()
         self.timer.timeout.connect(self.randomAct)
-        self.timer.start(200)
+        self.timer.start(500)
 
     '''随机做一个动作'''
 
@@ -76,6 +80,23 @@ class DesktopPet(QWidget):
         self.image.setPixmap(QPixmap.fromImage(image))
 
     '''随机导入一个桌面宠物的所有图片'''
+
+    def randomLoadPetImages1(self):
+        # pet_name = random.choice(list(cfg.PET_ACTIONS_MAP.keys()))
+        pet_names = ["pet_1", "pet_2", "pet_3"]
+        pet_images = []
+        iconpath = ""
+        for pet_name in pet_names:
+            print(pet_name)
+            actions = cfg.PET_ACTIONS_MAP[pet_name]
+
+            print(actions)
+            for action in actions:
+                pet_images.append(
+                    [self.loadImage(os.path.join(cfg.ROOT_DIR, pet_name, '0-' + item + '.png')) for item in action])
+            iconpath = os.path.join(cfg.ROOT_DIR, pet_name, '0-1.png')
+        print(len(pet_images))
+        return pet_images, iconpath
 
     def randomLoadPetImages(self):
         pet_name = random.choice(list(cfg.PET_ACTIONS_MAP.keys()))
@@ -121,8 +142,8 @@ class DesktopPet(QWidget):
     def randomPosition(self):
         screen_geo = QDesktopWidget().screenGeometry()
         pet_geo = self.geometry()
-        width = (screen_geo.width() - pet_geo.width()) * random.random()
-        height = (screen_geo.height() - pet_geo.height()) * random.random()
+        width = (screen_geo.width() - pet_geo.width())
+        height = (screen_geo.height() - pet_geo.height())
         self.move(width, height)
 
     '''退出程序'''
